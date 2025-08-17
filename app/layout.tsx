@@ -1,11 +1,6 @@
-// app/layout.tsx
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import { AuthProvider } from '@/lib/firebase/auth-context';
-import { Toaster } from 'react-hot-toast';
 
-const inter = Inter({ subsets: ['latin'] });
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'AggieStudyLink - Find Your Study Pod',
@@ -19,22 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <AuthProvider>
-          <Toaster 
-            position="top-center"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: '#333',
-                color: '#fff',
-              },
-            }}
-          />
-          {children}
-        </AuthProvider>
+      <body style={{ margin: 0, padding: 0 }}>
+        {children}
       </body>
     </html>
   );
 }
-

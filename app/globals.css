@@ -1,3 +1,4 @@
+/* app/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,6 +11,10 @@
   
   html {
     @apply bg-black;
+  }
+  
+  body {
+    @apply bg-black text-white;
   }
 }
 
