@@ -1,43 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { auth, googleProvider } from '@/lib/firebase/config';
-import { signInWithPopup, User } from 'firebase/auth';
+import { useAuth } from '@/lib/firebase/auth-context';
 
 export default function HomePage() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const handleSignIn = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      if (!result.user.email?.endsWith('@tamu.edu')) {
-        await auth.signOut();
-        alert('Only TAMU email addresses are allowed');
-        return;
-      }
-      console.log('Signed in:', result.user.email);
-    } catch (error) {
-      console.error('Sign in error:', error);
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await auth.signOut();
-      setUser(null);
-    } catch (error) {
-      console.error('Sign out error:', error);
-    }
-  };
+  const { user, loading, signInWithGoogle, signOut } = useAuth();
 
   if (loading) {
     return (
@@ -74,7 +40,7 @@ export default function HomePage() {
             Signed in as: {user.email}
           </div>
           <button
-            onClick={handleSignOut}
+            onClick={signOut}
             style={{
               padding: '10px 20px',
               backgroundColor: '#ef4444',
@@ -140,7 +106,7 @@ export default function HomePage() {
 
           {!user && (
             <button
-              onClick={handleSignIn}
+              onClick={signInWithGoogle}
               style={{
                 padding: '16px 32px',
                 fontSize: '18px',
@@ -419,7 +385,7 @@ export default function HomePage() {
           </p>
           {!user && (
             <button
-              onClick={handleSignIn}
+              onClick={signInWithGoogle}
               style={{
                 padding: '12px 24px',
                 fontSize: '16px',

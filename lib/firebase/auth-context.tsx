@@ -8,7 +8,7 @@ import {
   onAuthStateChanged
 } from 'firebase/auth';
 import { auth, googleProvider, db } from './config';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
@@ -26,7 +26,7 @@ interface UserProfile {
   lastName?: string;
   year?: string;
   major?: string;
-  createdAt: any;
+  createdAt: Timestamp | ReturnType<typeof serverTimestamp>;
   isActive: boolean;
   profileComplete: boolean;
 }
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (!userDoc.exists()) {
         // Create new user profile
-        const newUserProfile: UserProfile = {
+        const newUserProfile = {
           email: result.user.email,
           firstName: result.user.displayName?.split(' ')[0] || '',
           lastName: result.user.displayName?.split(' ')[1]?.[0] || '', // Just initial
@@ -70,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUserProfile(newUserProfile);
         
         toast.success('Welcome to AggieStudyLink! Please complete your profile.');
-        router.push('/profile');
+        router.push('/onboarding');
       } else {
         // Load existing profile
         const existingProfile = userDoc.data() as UserProfile;
@@ -80,18 +80,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           toast('Please complete your profile to start matching!', {
             icon: '📝'
           });
-          router.push('/profile');
+          router.push('/onboarding');
         } else {
           router.push('/dashboard');
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Sign in error:', error);
       
-      if (error.code === 'auth/popup-closed-by-user') {
-        toast.error('Sign in cancelled');
-      } else {
-        toast.error('Failed to sign in. Please try again.');
+      if (error instanceof Error) {
+        if ((error as any).code === 'auth/popup-closed-by-user') {
+          toast.error('Sign in cancelled');
+        } else {
+          toast.error('Failed to sign in. Please try again.');
+        }
       }
     }
   };
