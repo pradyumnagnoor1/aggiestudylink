@@ -1,24 +1,17 @@
-
 'use client';
 
 import { useEffect, useState } from 'react';
 import { auth, googleProvider } from '@/lib/firebase/config';
-import { signInWithPopup } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+import { signInWithPopup, User } from 'firebase/auth';
 
 export default function HomePage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
       setLoading(false);
-      if (user) {
-        // User is signed in, redirect to dashboard
-        // router.push('/dashboard');
-      }
     });
     return () => unsubscribe();
   }, []);
@@ -185,7 +178,7 @@ export default function HomePage() {
               marginTop: '20px'
             }}>
               <p style={{ color: '#86efac' }}>
-                ✅ You're signed in! Dashboard coming soon...
+                ✅ You&apos;re signed in! Dashboard coming soon...
               </p>
             </div>
           )}
@@ -262,7 +255,7 @@ export default function HomePage() {
               Easy Scheduling
             </h3>
             <p style={{ color: '#9ca3af', lineHeight: '1.6' }}>
-              Automatically find the best meeting times based on everyone's availability. 
+              Automatically find the best meeting times based on everyone&apos;s availability. 
               Export sessions to your calendar.
             </p>
           </div>
