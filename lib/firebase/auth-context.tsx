@@ -26,6 +26,7 @@ interface UserProfile {
   lastName?: string;
   year?: string;
   major?: string;
+  courses?: string[];
   createdAt: Timestamp | ReturnType<typeof serverTimestamp>;
   isActive: boolean;
   profileComplete: boolean;
