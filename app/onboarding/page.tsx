@@ -293,7 +293,7 @@ const coursesByMajor: Record<string, string[]> = {
 };
 
 export default function Onboarding() {
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, refreshUserProfile } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -359,7 +359,10 @@ export default function Onboarding() {
         updatedAt: new Date()
       });
 
-      toast.success('Profile completed! Let\'s find your study partners!');
+      // Refresh the user profile in context
+      await refreshUserProfile();
+
+      toast.success('Profile updated successfully!');
       router.push('/dashboard');
     } catch (error) {
       console.error('Error updating profile:', error);

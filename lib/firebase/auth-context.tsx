@@ -19,6 +19,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   userProfile: UserProfile | null;
+  refreshUserProfile: () => Promise<void>;
 }
 
 interface UserProfile {
@@ -150,6 +151,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Refresh user profile from Firestore
+  const refreshUserProfile = async () => {
+    if (user) {
+      try {
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        if (userDoc.exists()) {
+          setUserProfile(userDoc.data() as UserProfile);
+        }
+      } catch (error) {
+        console.error('Error refreshing profile:', error);
+      }
+    }
+  };
+
   // Sign out
   const signOut = async () => {
     try {
@@ -202,7 +219,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     signInWithGoogle,
     signOut,
-    userProfile
+    userProfile,
+    refreshUserProfile
   };
 
   return (
