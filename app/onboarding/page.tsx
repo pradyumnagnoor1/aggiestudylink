@@ -310,7 +310,7 @@ export default function Onboarding() {
     if (userProfile && !dataLoaded) {
       setFormData({
         firstName: userProfile.firstName || '',
-        lastName: userProfile.lastName || '',
+        lastName: userProfile.lastName || '', // Now loads full last name
         year: userProfile.year || '',
         major: userProfile.major || '',
         courses: userProfile.courses || [],
@@ -341,7 +341,7 @@ export default function Onboarding() {
       return;
     }
 
-    if (!formData.firstName || !formData.year || !formData.major || formData.courses.length === 0) {
+    if (!formData.firstName || !formData.lastName || !formData.year || !formData.major || formData.courses.length === 0) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -351,7 +351,7 @@ export default function Onboarding() {
       const userRef = doc(db, 'users', user.uid);
       await updateDoc(userRef, {
         firstName: formData.firstName,
-        lastName: formData.lastName.charAt(0).toUpperCase(), // Just the initial
+        lastName: formData.lastName, // Save full last name
         year: formData.year,
         major: formData.major,
         courses: formData.courses,
@@ -435,7 +435,7 @@ export default function Onboarding() {
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#9ca3af' }}>
-                Last Name (Optional)
+                Last Name *
               </label>
               <input
                 type="text"
@@ -451,7 +451,11 @@ export default function Onboarding() {
                   fontSize: '16px'
                 }}
                 placeholder="Doe"
+                required
               />
+              <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                Your full name will be stored securely
+              </p>
             </div>
           </div>
 

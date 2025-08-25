@@ -111,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const newUserProfile = {
           email: result.user.email!,
           firstName: result.user.displayName?.split(' ')[0] || '',
-          lastName: result.user.displayName?.split(' ')[1]?.[0] || '', // Just initial
+          lastName: result.user.displayName?.split(' ').slice(1).join(' ') || '', // Full last name
           createdAt: serverTimestamp(),
           isActive: true,
           profileComplete: false
@@ -202,7 +202,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const userDoc = await getDoc(userDocRef);
         
         if (userDoc.exists()) {
-          setUserProfile(userDoc.data() as UserProfile);
+          const profile = userDoc.data() as UserProfile;
+          setUserProfile(profile);
+          
+          // Auto-redirect based on profile status
+          if (window.location.pathname === '/') {
+            if (profile.profileComplete) {
+              router.push('/dashboard');
+            } else {
+              router.push('/onboarding');
+            }
+          }
         }
       } else {
         setUserProfile(null);
@@ -212,7 +222,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   const value = {
     user,

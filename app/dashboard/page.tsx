@@ -155,7 +155,7 @@ export default function Dashboard() {
           gap: '20px',
           marginBottom: '40px'
         }}>
-          {/* Start Swiping Card */}
+          {/* Study Preferences Card */}
           <div style={{
             padding: '30px',
             background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)',
@@ -166,11 +166,12 @@ export default function Dashboard() {
           }}
           onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
           onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          onClick={() => router.push('/preferences')}
           >
-            <div style={{ fontSize: '40px', marginBottom: '15px' }}>🎯</div>
-            <h3 style={{ fontSize: '20px', marginBottom: '10px' }}>Start Matching</h3>
+            <div style={{ fontSize: '40px', marginBottom: '15px' }}>⚙️</div>
+            <h3 style={{ fontSize: '20px', marginBottom: '10px' }}>Study Preferences</h3>
             <p style={{ color: '#9ca3af', fontSize: '14px' }}>
-              Swipe through potential study partners in your courses
+              Set your study times, locations, and style preferences
             </p>
           </div>
 
@@ -185,11 +186,12 @@ export default function Dashboard() {
           }}
           onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
           onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          onClick={() => router.push('/matching-queue')}
           >
             <div style={{ fontSize: '40px', marginBottom: '15px' }}>💬</div>
             <h3 style={{ fontSize: '20px', marginBottom: '10px' }}>Your Matches</h3>
             <p style={{ color: '#9ca3af', fontSize: '14px' }}>
-              View and chat with your matched study partners
+              View your matching queue and connected study partners
             </p>
             <div style={{
               marginTop: '15px',
@@ -201,7 +203,7 @@ export default function Dashboard() {
               fontSize: '12px',
               color: '#86efac'
             }}>
-              0 matches
+              Check status
             </div>
           </div>
 
