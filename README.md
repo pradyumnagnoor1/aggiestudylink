@@ -1,186 +1,93 @@
-# AggieStudyLink 🎓
+# AggieStudyLink
 
-A smart study matching platform exclusively for Texas A&M University students. Connect with compatible study partners based on courses, schedules, and study preferences.
+A study-partner discovery prototype for Texas A&M students. Students sign in with Google, select their courses, save study preferences, and view study-match records.
 
-**Live Demo:** [aggiestudylink.vercel.app](https://aggiestudylink.vercel.app)
+Built with Next.js 15, React 19, TypeScript, Tailwind CSS, and Firebase.
 
-## 🚀 Project Status
+[Hosted app](https://aggiestudylink.vercel.app) · [Local setup](#local-setup) · [Project status](#project-status)
 
-**Currently in Development** - Day 3 of 14-day roadmap
+## Project status
 
-### Completed Features ✅
-- Google OAuth authentication with TAMU email restriction (@tamu.edu only)
-- User profile creation and management
-- Dynamic onboarding flow with major-specific course selection
-- Study preferences system (locations, times, study style)
-- Matching queue interface
-- Dashboard with profile editing
-- Responsive UI with dark theme
+The repository implements authentication, onboarding, profile editing, study preferences, and a Firestore-backed match display. The matching page subscribes to existing `matches` documents and loads the other students' profiles.
 
-### In Progress 🔨
-- Python-based matching algorithm
-- Real-time messaging system
-- Study pod formation
-- Scheduling system
+A matching producer or Python matching service is not included in this repository. Messaging, study pods, and coordinated scheduling remain planned work. The queue's searching indicator does not itself run a matching algorithm.
 
-## 🛠 Tech Stack
+## Features
 
-- **Frontend:** Next.js 15, TypeScript, React 19
-- **Backend:** Firebase (Auth, Firestore, Realtime Database)
-- **Deployment:** Vercel
-- **Styling:** Tailwind CSS, Radix UI
-- **Coming Soon:** Python matching service with scikit-learn
+- Google sign-in with a client-side check for `@tamu.edu` email addresses.
+- Profile setup with name, year, major, and course selection.
+- Study location, availability, study style, and group-size preferences.
+- Dashboard and profile editing.
+- Live updates to the match display through Firestore subscriptions.
+- Responsive dark interface.
 
-## 📋 Features
+## Local setup
 
-### Authentication & Security
-- Secure Google OAuth with domain restriction
-- Firebase Security Rules implementation
-- Protected routes for authenticated users
+Use a Node.js version compatible with the pinned Next.js 15 release, plus npm and a Firebase project.
 
-### User Profiles
-- Major-specific course selection (Engineering, Pre-med, Sciences)
-- Study preference configuration
-- Availability scheduling by day/time slots
-- Study location preferences (Evans Library, Zachry, MSC, etc.)
-
-### Matching System (In Development)
-- Algorithm considers:
-  - Course overlap
-  - Schedule compatibility
-  - Study style alignment
-  - Location preferences
-  - Group size preferences
-
-## 🚦 Getting Started
-
-### Prerequisites
-- Node.js 18+
-- npm or yarn
-- Firebase account
-- Vercel account (for deployment)
-
-### Installation
-
-1. Clone the repository:
-```bash
+```sh
 git clone https://github.com/pradyumnagnoor1/aggiestudylink.git
 cd aggiestudylink
+npm ci
 ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+Create `.env.local` in the repository root:
 
-3. Set up environment variables:
-Create a `.env.local` file with your Firebase configuration:
-```env
+```dotenv
 NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-NEXT_PUBLIC_FIREBASE_DATABASE_URL=your_database_url
 ```
 
-4. Run the development server:
-```bash
+In Firebase, enable Google Authentication, create Firestore, and add localhost and your deployed hostname to Authentication's authorized domains. The Firebase configuration also initializes Realtime Database and derives its URL as `https://<project-id>-default-rtdb.firebaseio.com` from the project ID.
+
+```sh
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the app.
+Open [localhost:3000](http://localhost:3000).
 
-## 📁 Project Structure
+## Data and access
 
-```
-aggiestudylink/
-├── app/
-│   ├── page.tsx                 # Landing page
-│   ├── dashboard/page.tsx       # User dashboard
-│   ├── onboarding/page.tsx      # Profile setup
-│   ├── preferences/page.tsx     # Study preferences
-│   └── matching-queue/page.tsx  # Matching interface
-├── lib/
-│   └── firebase/
-│       ├── config.ts            # Firebase configuration
-│       └── auth-context.tsx     # Authentication context
-├── components/
-│   └── (various UI components)
-└── public/
-    └── (static assets)
-```
+Profiles and preferences are stored in `users/{uid}`. The matching page queries `matches` where the signed-in user's UID is included in the `users` array. Displayed match records include a course, status, and creation timestamp.
 
-## 🔐 Firebase Setup
+The client-side email check is not a database authorization boundary. Firebase Security Rules must enforce access independently. No deployable Firebase Security Rules files are included in this repository; configure and verify those rules before using real student records.
 
-1. Create a Firebase project
-2. Enable Google Authentication
-3. Create Firestore and Realtime databases
-4. Add authorized domains:
-   - localhost
-   - your-app.vercel.app
+## Commands
 
-## 📊 Database Schema
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Start the development server |
+| `npm run build` | Build the production app |
+| `npm start` | Serve a production build |
+| `npx tsc --noEmit` | Check TypeScript |
+| `npm run lint` | Run the repository's lint script |
 
-### Firestore Collections
+No automated test script is configured.
 
-**users/**
-```javascript
-{
-  email: string,
-  firstName: string,
-  lastName: string,
-  year: string,
-  major: string,
-  courses: string[],
-  studyPreferences: {
-    studyLocations: string[],
-    studyStyle: string,
-    preferredTimes: object,
-    groupSize: string,
-    lookingFor: string[]
-  },
-  profileComplete: boolean,
-  createdAt: timestamp
-}
+## Repository map
+
+```text
+app/page.tsx                  Landing page
+app/onboarding/               Profile and course setup
+app/preferences/              Study preferences
+app/dashboard/                Dashboard and profile editing
+app/matching-queue/           Firestore match display
+lib/firebase/config.ts        Firebase client initialization
+lib/firebase/auth-context.tsx Authentication and profile context
+components/ui/                Shared interface components
 ```
 
-**matches/** (Coming Soon)
-```javascript
-{
-  users: string[],
-  score: number,
-  createdAt: timestamp,
-  status: string
-}
-```
+## Planned work
 
-## 🗺 Roadmap
+- Implement and evaluate a match-generation service.
+- Connect profile actions and messaging.
+- Add study pods and coordinated scheduling.
+- Version Firebase access rules and add automated verification.
 
-- [x] Day 1-2: Setup & Authentication
-- [x] Day 3: User Profiles & Preferences
-- [ ] Day 4: Swipe Interface
-- [ ] Day 5: Matching System
-- [ ] Day 6: Study Pods
-- [ ]. Day 7: Scheduling
-- [ ] Day 8-14: Enhanced Features
+## Author and usage
 
-## 🤝 Contributing
-
-This project is currently in active development. Contributions, issues, and feature requests are welcome!
-
-## 📄 License
-
-This project is private and proprietary.
-
-## 👤 Author
-
-**Pradyumna Agnoor**
-- GitHub: [@pradyumnagnoor1](https://github.com/pradyumnagnoor1)
-
-## 🙏 Acknowledgments
-
-- Texas A&M University students for inspiration
-- Firebase for backend infrastructure
-- Vercel for hosting
+Created by [Pradyumna Agnoor](https://github.com/pradyumnagnoor1). The project is described as private and proprietary; no open-source license is granted by this README.
